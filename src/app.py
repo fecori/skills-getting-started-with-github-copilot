@@ -20,8 +20,7 @@ app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
           "static")), name="static")
 
 # In-memory activity database
-# In-memory activity database
-activities = {
+_INITIAL_ACTIVITIES = {
    "Chess Club": {
       "description": "Learn strategies and compete in chess tournaments",
       "schedule": "Fridays, 3:30 PM - 5:00 PM",
@@ -78,6 +77,24 @@ activities = {
    }
 }
 
+
+# Make a mutable copy for runtime use
+activities = {}
+
+def reset_activities():
+    """Reset activities to initial state. Used for testing."""
+    global activities
+    activities.clear()
+    for key, value in _INITIAL_ACTIVITIES.items():
+        activities[key] = {
+            "description": value["description"],
+            "schedule": value["schedule"],
+            "max_participants": value["max_participants"],
+            "participants": value["participants"].copy()
+        }
+
+# Initialize activities on startup
+reset_activities()
 
 @app.get("/")
 def root():
